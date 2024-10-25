@@ -1,0 +1,27 @@
+{
+    "name": "mailplug/ci-health",
+    "description": "CodeIgniter Health Check Library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "ci",
+        "health"
+    ],
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Mailplug\\Health\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Junseok Shin",
+            "email": "sjsage522@mailplug.co.kr"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "laminas/laminas-diagnostics": "1.22.0",
+        "myclabs/php-enum": "1.8.4"
+    }
+}
