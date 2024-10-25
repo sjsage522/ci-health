@@ -20,12 +20,12 @@ class HealthCheckService
 
     public function __construct(Config $config)
     {
-        $this->config = $config;   
+        $this->config = $config;
     }
 
     public function healthCheckAll(): array
     {
-        $healthCheckLists = HealthCheckTarget::values();
+        $healthCheckLists = HealthCheckTarget::mergeValues();
 
         $checkList = [];
         foreach ($healthCheckLists as $healthCheckTarget) {
@@ -37,8 +37,14 @@ class HealthCheckService
             if ($check === null) {
                 continue;
             }
-            
-            $checkList[$healthCheckTarget->getValue()] = $check;
+
+            if ($healthCheckTarget instanceof HealthCheckTargetDb) {
+                $checkList['db'][$healthCheckTarget->getValue()] = $check;
+            } else if ($healthCheckTarget instanceof HealthCheckTargetPhp) {
+                $checkList['php'][$healthCheckTarget->getValue()] = $check;
+            } else {
+                $checkList[$healthCheckTarget->getValue()] = $check;
+            }
         }
 
         return $checkList;
@@ -47,16 +53,22 @@ class HealthCheckService
     private function healthCheck(HealthCheckTarget $healthCheckTarget): ?array
     {
         switch ($healthCheckTarget) {
-            case HealthCheckTarget::RABBITMQ:
+            case HealthCheckTargetEtc::RABBITMQ:
                 return $this->rabbitMQCheck();
-            case HealthCheckTarget::REDIS:
+            case HealthCheckTargetDb::REDIS:
                 return $this->redisCheck();
-            case HealthCheckTarget::DB:
-                return $this->dbCheck();
-            case HealthCheckTarget::DISK_USAGE:
+            case HealthCheckTargetDb::MYSQLDB:
+                return $this->mysqlCheck();
+            case HealthCheckTargetDb::POSTGRESDB:
+                return $this->pgsqlCheck();
+            case HealthCheckTargetEtc::DISK_USAGE:
                 return $this->diskUsageCheck();
-            case HealthCheckTarget::PHP:
-                return $this->phpCheck();
+            case HealthCheckTargetPhp::PHPFPM_COUNT:
+                return $this->phpFpmCountCheck();
+            case HealthCheckTargetPhp::PHP_VERSION:
+                return $this->phpVersionCheck();
+            case HealthCheckTargetPhp::OPCACHE_MEMORY:
+                return $this->phpOpcacheCheck();
             default:
                 return null;
         }
@@ -72,12 +84,14 @@ class HealthCheckService
         return $this->getCheckResult(new Redis($this->config->redisHost, $this->config->redisPort, $this->config->redisPassword == '' ? null : $this->config->redisPassword));
     }
 
-    private function dbCheck(): array
+    private function mysqlCheck(): array
     {
-        return [
-            HealthCheckTarget::MYSQLDB => $this->pdoCheck('mysql:host=' . $this->config->mysqlHost . ';' . 'dbname=' . $this->config->mysqlDatabase,  $this->config->mysqlUser, $this->config->mysqlPassword),
-            HealthCheckTarget::POSTGRESDB => $this->pdoCheck('pgsql:host=' . $this->config->psqlHost . ';' . 'dbname=' . $this->config->psqlDatabase,  $this->config->psqlUser, $this->config->psqlPassword),
-        ];
+        return $this->pdoCheck('mysql:host=' . $this->config->mysqlHost . ';' . 'dbname=' . $this->config->mysqlDatabase,  $this->config->mysqlUser, $this->config->mysqlPassword);
+    }
+
+    private function pgsqlCheck(): array
+    {
+        return $this->pdoCheck('pgsql:host=' . $this->config->psqlHost . ';' . 'dbname=' . $this->config->psqlDatabase,  $this->config->psqlUser, $this->config->psqlPassword);
     }
 
     private function diskUsageCheck(): array
@@ -91,7 +105,7 @@ class HealthCheckService
         return $this->getCheckResult(new PDOCheck($dsn, $username, $password));
     }
 
-    private function phpCheck(): array
+    private function phpFpmCountCheck()
     {
         $phpfpmCountCheck = new Callback(function () {
             exec('ps -aux | grep php-fpm | grep -v grep | wc -l', $output, $return);
@@ -103,11 +117,17 @@ class HealthCheckService
             return new Success("php-fpm processes are running. [$output[0]]");
         });
 
-        return [
-            HealthCheckTarget::PHP_VERSION => $this->getCheckResult(new PhpVersion('7.4', '>=')),
-            HealthCheckTarget::PHPFPM_COUNT => $this->getCheckResult($phpfpmCountCheck),
-            HealthCheckTarget::OPCACHE_MEMORY => $this->getCheckResult(new OpCacheMemory(70, 90)),
-        ];
+        return $this->getCheckResult($phpfpmCountCheck);
+    }
+
+    private function phpOpcacheCheck()
+    {
+        return $this->getCheckResult(new OpCacheMemory(70, 90));
+    }
+
+    private function phpVersionCheck()
+    {
+        return $this->getCheckResult(new PhpVersion('7.4', '>='));
     }
 
     private function getCheckResult(CheckInterface $checker): array
