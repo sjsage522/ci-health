@@ -138,7 +138,13 @@ class HealthCheckService
             $checkResult = new Failure($e->getMessage());
         }
 
-        return (new CheckResultWrapper($checkResult))
+        $resultWrapper = (new CheckResultWrapper($checkResult))
             ->toArray();
+        
+        if ($this->config->showDetails == 'never') {
+            unset($resultWrapper['details']);
+        }
+
+        return $resultWrapper;
     }
 }

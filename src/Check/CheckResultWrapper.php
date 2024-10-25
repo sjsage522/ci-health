@@ -35,8 +35,10 @@ class CheckResultWrapper
     {
         return [
             'status' => $this->status,
-            'message' => $this->result->getMessage(),
-            'data' => $this->result->getData(),
+            'details' => [
+                'message' => $this->result->getMessage(),
+                'data' => $this->result->getData(),
+            ]
         ];
     }
 }

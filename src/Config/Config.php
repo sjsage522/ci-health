@@ -20,6 +20,11 @@ class Config
     public array $excludes = [];
 
     /**
+     * @var string Show details of the health check [always, never]
+     */
+    public string $showDetails = 'always';
+
+    /**
      * rabbit mq config
      */
     public string $rabbitMqHost = 'localhost';
