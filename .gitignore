@@ -197,3 +197,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/codeigniter,windows,macos,visualstudiocode,intellij+all,composer
+
+# phpunit
+/.phpunit.cache/
+/phpunit.xml
+/coverage

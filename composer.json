@@ -13,6 +13,11 @@
             "Mailplug\\Health\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Mailplug\\Health\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Junseok Shin",
@@ -23,5 +28,22 @@
         "php": "^7.4",
         "laminas/laminas-diagnostics": "1.22.0",
         "myclabs/php-enum": "1.8.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5.26"
+    },
+    "conflict": {
+    },
+    "suggest": {
+        "ext-bcmath": "Required by Check\\CpuPerformance",
+        "doctrine/migrations": "Required by Check\\DoctrineMigration",
+        "guzzlehttp/guzzle": "Required by Check\\GuzzleHttpService",
+        "predis/predis": "Required by Check\\Redis",
+        "symfony/yaml": "Required by Check\\YamlFile",
+        "php-amqplib/php-amqplib": "Required by Check\\RabbitMQ"
+    },
+    "scripts": {
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-html coverage"
     }
 }
