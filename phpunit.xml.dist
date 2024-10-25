@@ -22,10 +22,7 @@
     </coverage>
 
     <php>
-        <env name="TESTS_LAMINAS_DIAGNOSTICS_MEMCACHE_ENABLED" value="false" />
-        <env name="TESTS_LAMINAS_DIAGNOSTICS_MEMCACHED_ENABLED" value="false" />
-        <env name="TESTS_LAMINAS_DIAGNOSTICS_MONGO_ENABLED" value="false" />
-        <env name="TESTS_LAMINAS_DIAGNOSTICS_RABBITMQ_ENABLED" value="false" />
-        <env name="TESTS_LAMINAS_DIAGNOSTICS_REDIS_ENABLED" value="false" />
+        <env name="TESTS_RABBITMQ_ENABLED" value="false" />
+        <env name="TESTS_REDIS_ENABLED" value="false" />
     </php>
 </phpunit>
