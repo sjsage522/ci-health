@@ -10,7 +10,7 @@ namespace Mailplug\Health\Config;
 class Config
 {
     /**
-     * @var array List of components that should be alive
+     * @var array<HealthCheckTarget> List of components that should be alive
      */
     public array $alives = [];
 
