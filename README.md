@@ -20,7 +20,7 @@ Mailplug Health Check Client is a PHP library that provides a simple way to chec
 You can install this package via Composer:
 
 ```bash
-composer require mailplug/ci-health
+composer require sjsage522/ci-health
 ```
 
 ## Usage
