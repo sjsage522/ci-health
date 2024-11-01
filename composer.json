@@ -1,5 +1,5 @@
 {
-    "name": "mailplug/ci-health",
+    "name": "sjsage522/ci-health",
     "description": "CodeIgniter Health Check Library",
     "license": "MIT",
     "keywords": [
@@ -16,7 +16,7 @@
     "authors": [
         {
             "name": "Junseok Shin",
-            "email": "sjsage522@mailplug.co.kr"
+            "email": "sjsage522.dev@gmail.com"
         }
     ],
     "require": {
